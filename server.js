@@ -47,7 +47,7 @@ app.use(express.json());
 
 // Testing
 app.get("/api/root", (req, res) => {
-  res.send("NGO Server Is Running");
+  res.send({ message: "NGO Server Is Running" });
 });
 
 app.listen(port, () => {

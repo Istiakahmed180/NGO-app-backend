@@ -9,6 +9,10 @@ const moment = require("moment/moment");
 
 authenticaton.use(express.json());
 
+authenticaton.get("/root", (req, res) => {
+  res.send({ message: "Authentication Route Is Running" });
+});
+
 authenticaton.get("/recent-users", (req, res) => {
   try {
     User.find({ role: { $ne: "admin" } })

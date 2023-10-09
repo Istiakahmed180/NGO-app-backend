@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 require("dotenv").config();
 const userAuth = require("./routes/loginRoutes");
-// const adminRoute = require("./routes/adminroute");
+const adminRoute = require("./routes/adminroute");
 const Invest = require("./routes/investRoute");
 // const SendHistory = require("./routes/sendRoute");
 // const Received = require("./routes/receivedRoute");
@@ -37,7 +37,7 @@ app.use(express.json());
 
 // User authentication
 app.use("/api/auth", userAuth);
-// app.use("/api/admin", adminRoute);
+app.use("/api/admin", adminRoute);
 app.use("/api/invest", Invest);
 // app.use("/send", SendHistory);
 // app.use("/received", Received);

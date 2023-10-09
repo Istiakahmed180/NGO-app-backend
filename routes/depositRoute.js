@@ -37,8 +37,8 @@ cron.schedule("*/1 * * * *", async () => {
   }
 });
 
-Deposit.get("/", (req, res) => {
-  res.send("Deposit Route Is Running");
+Deposit.get("/root", (req, res) => {
+  res.send({ message: "Deposit Route Is Running" });
 });
 
 Deposit.get("/get-deposit-transaction", async (req, res) => {

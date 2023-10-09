@@ -3,8 +3,8 @@ const Profit = express.Router();
 const ProfitModel = require("../Scemma/profitSchema");
 const WithdrawModel = require("../Scemma/withdrawShhema");
 
-Profit.get("/", (req, res) => {
-  res.send("Profit Route Is Running");
+Profit.get("/root", (req, res) => {
+  res.send({ message: "Profit Route Is Running" });
 });
 
 Profit.get("/get-admin-profit", async (req, res) => {

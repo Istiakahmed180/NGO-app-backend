@@ -8,12 +8,12 @@ require("dotenv").config();
 const userAuth = require("./routes/loginRoutes");
 const adminRoute = require("./routes/adminroute");
 const Invest = require("./routes/investRoute");
-// const SendHistory = require("./routes/sendRoute");
-// const Received = require("./routes/receivedRoute");
-// const Withdraw = require("./routes/withdrawRoute");
-// const Deposit = require("./routes/depositRoute");
-// const Profit = require("./routes/profitRoute");
-// require("./Scemma/depositSchema");
+const SendHistory = require("./routes/sendRoute");
+const Received = require("./routes/receivedRoute");
+const Withdraw = require("./routes/withdrawRoute");
+const Deposit = require("./routes/depositRoute");
+const Profit = require("./routes/profitRoute");
+require("./Scemma/depositSchema");
 
 // Middleware
 app.use(cors());
@@ -39,11 +39,11 @@ app.use(express.json());
 app.use("/api/auth", userAuth);
 app.use("/api/admin", adminRoute);
 app.use("/api/invest", Invest);
-// app.use("/send", SendHistory);
-// app.use("/received", Received);
-// app.use("/withdraw", Withdraw);
-// app.use("/deposit", Deposit);
-// app.use("/profit", Profit);
+app.use("/api/send", SendHistory);
+app.use("/api/received", Received);
+app.use("/api/withdraw", Withdraw);
+app.use("/api/deposit", Deposit);
+app.use("/api/profit", Profit);
 
 // Testing
 app.get("/api/root", (req, res) => {

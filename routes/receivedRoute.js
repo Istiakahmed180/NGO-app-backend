@@ -2,8 +2,8 @@ const express = require("express");
 const Received = express.Router();
 const ReceivedModel = require("../Scemma/receivedSchema");
 
-Received.get("/", (req, res) => {
-  res.send("Received Route Is Running");
+Received.get("/root", (req, res) => {
+  res.send({ message: "Received Route Is Running" });
 });
 
 Received.get("/all-receive-data", async (req, res) => {
@@ -31,12 +31,10 @@ Received.get("/get-user-receive-history", async (req, res) => {
       return res.status(404).json({ message: "User Receiving Data Not Found" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "User Receiving Data Found Successfully",
-        data: getUserRecevingData,
-      });
+    res.status(200).json({
+      message: "User Receiving Data Found Successfully",
+      data: getUserRecevingData,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Side Error" });

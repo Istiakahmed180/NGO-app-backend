@@ -5,8 +5,8 @@ const UserModel = require("../Scemma/userInfo");
 const InvestModel = require("../Scemma/investSchema");
 const moment = require("moment");
 
-Withdraw.get("/", (req, res) => {
-  res.send("Withdraw Route Is Running");
+Withdraw.get("/root", (req, res) => {
+  res.send({ message: "Withdraw Route Is Running" });
 });
 
 Withdraw.get("/admin/withdraw-request", async (req, res) => {

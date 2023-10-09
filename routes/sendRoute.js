@@ -2,8 +2,8 @@ const express = require("express");
 const Send = express.Router();
 const SendModel = require("../Scemma/sendSchema");
 
-Send.get("/", (req, res) => {
-  res.send("Send History Route Is Running");
+Send.get("/root", (req, res) => {
+  res.send({ message: "Send History Route Is Running" });
 });
 
 Send.get("/all-send-history", async (req, res) => {

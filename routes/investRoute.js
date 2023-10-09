@@ -3,8 +3,8 @@ const InvestModel = require("../Scemma/investSchema");
 const UserModel = require("../Scemma/userInfo");
 const Invest = express.Router();
 
-Invest.get("/", (req, res) => {
-  res.send("Invest Route Is Running");
+Invest.get("/root", (req, res) => {
+  res.send({ message: "Invest Route Is Running" });
 });
 
 // Updated all client API

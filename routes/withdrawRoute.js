@@ -46,4 +46,20 @@ Withdraw.get("/get-user-withdraw-history", async (req, res) => {
   }
 });
 
+Withdraw.get("/get-approve-withdraw-request", async (req, res) => {
+  try {
+    const getAllApproveWithdraw = await WithdrawModel.find({
+      approvalStatus: "approved",
+    }).sort({ date: -1 });
+
+    res.status(200).json({
+      message: "Appreoved Withdraw Request Data Get Complete",
+      data: getAllApproveWithdraw,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Side Error" });
+  }
+});
+
 module.exports = Withdraw;

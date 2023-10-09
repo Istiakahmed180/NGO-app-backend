@@ -62,4 +62,109 @@ Withdraw.get("/get-approve-withdraw-request", async (req, res) => {
   }
 });
 
+Withdraw.post("/add-withdraw-request", async (req, res) => {
+  try {
+    const { name, email, phone, address, gender, bio, amount, image } =
+      req.body;
+
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const pendingWithdrawal = await WithdrawModel.findOne({
+      email: email,
+      approvalStatus: "pending",
+    });
+
+    if (pendingWithdrawal) {
+      return res.json({
+        message: "Withdrawal request is pending",
+        type: false,
+      });
+    }
+
+    if (amount <= 0) {
+      return res.json({
+        message: "Invalid withdrawal amount",
+        type: false,
+      });
+    }
+
+    if (user.currentBalance < amount) {
+      return res.json({
+        message: "Insufficient balance for withdrawal",
+        type: false,
+      });
+    }
+
+    const checkWithdrawDate = await WithdrawModel.findOne({
+      email: email,
+      approvalStatus: "approved",
+      isAdminApproved: true,
+    }).sort({ _id: -1 });
+
+    if (checkWithdrawDate) {
+      const currentDate = moment().format("DD-MM-YYYY");
+      const withdrawalDate = moment(checkWithdrawDate.withdrawDate).format(
+        "DD-MM-YYYY"
+      );
+
+      if (withdrawalDate > currentDate) {
+        return res.json({
+          message: `You can withdraw again after this date: (${withdrawalDate})`,
+          type: false,
+        });
+      } else {
+        checkWithdrawDate.withdrawDate = null;
+
+        const addRequest = new WithdrawModel({
+          name,
+          email,
+          phone,
+          address,
+          gender,
+          bio,
+          amount,
+          image,
+          approvalStatus: "pending",
+          isAdminApproved: false,
+        });
+
+        await checkWithdrawDate.save();
+        await addRequest.save();
+
+        res.status(200).json({
+          message: "Withdraw Request Saved for Approval",
+          data: addRequest,
+          type: true,
+        });
+      }
+    } else {
+      const addRequest = new WithdrawModel({
+        name,
+        email,
+        phone,
+        address,
+        gender,
+        bio,
+        amount,
+        image,
+        approvalStatus: "pending",
+        isAdminApproved: false,
+      });
+      await addRequest.save();
+      res.status(200).json({
+        message: "Withdraw Request Saved for Approval",
+        data: addRequest,
+        type: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Side Error" });
+  }
+});
+
 module.exports = Withdraw;

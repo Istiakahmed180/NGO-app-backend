@@ -20,20 +20,20 @@ app.use(cors());
 app.use(express.json());
 
 // Set the strictQuery option
-// mongoose.set("strictQuery", false);
+mongoose.set("strictQuery", false);
 
 // MongoDB connection
-// const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pwqsejd.mongodb.net/aiTreading?retryWrites=true&w=majority`;
+const mongoUrl = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pwqsejd.mongodb.net/aiTreading?retryWrites=true&w=majority`;
 
-// mongoose
-//   .connect(mongoUrl, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => {
-//     console.log("Connected to MongoDB");
-//   })
-//   .catch((e) => console.log(e));
+mongoose
+  .connect(mongoUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((e) => console.log(e));
 
 // User authentication
 app.use("/api/auth", userAuth);

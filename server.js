@@ -12,6 +12,7 @@ const SendHistory = require("./routes/sendRoute");
 const Received = require("./routes/receivedRoute");
 const Deposit = require("./routes/depositRoute");
 const Profit = require("./routes/profitRoute");
+const Withdraw = require("./routes/withdrawRoute");
 require("./Scemma/depositSchema");
 
 // Middleware
@@ -40,7 +41,7 @@ app.use("/api/admin", adminRoute);
 app.use("/api/invest", Invest);
 app.use("/api/send", SendHistory);
 app.use("/api/received", Received);
-// app.use("/api/withdraw", Withdraw);
+app.use("/api/withdraw", Withdraw);
 app.use("/api/deposit", Deposit);
 app.use("/api/profit", Profit);
 

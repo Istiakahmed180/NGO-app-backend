@@ -21,4 +21,29 @@ Withdraw.get("/admin/withdraw-request", async (req, res) => {
   }
 });
 
+Withdraw.get("/get-user-withdraw-history", async (req, res) => {
+  try {
+    const userEmail = req.query.email;
+
+    const userWithdrawHistory = await WithdrawModel.find({
+      email: userEmail,
+      approvalStatus: "approved",
+    }).sort({ _id: -1 });
+
+    if (!userWithdrawHistory) {
+      return res
+        .status(404)
+        .json({ message: "User Withdraw History Data Not Available" });
+    }
+
+    res.status(200).json({
+      message: "User Withdraw HIstory Find Successfully",
+      data: userWithdrawHistory,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Side Error" });
+  }
+});
+
 module.exports = Withdraw;

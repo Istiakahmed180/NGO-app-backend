@@ -171,9 +171,9 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
   try {
     const requestID = req.params.id;
     const withdraw = await WithdrawModel.findById(requestID);
-    // if (!withdraw) {
-    //   return res.send({ message: "Withdraw data not found" });
-    // }
+    if (!withdraw) {
+      return res.send({ message: "Withdraw data not found" });
+    }
     // const user = await UserModel.findOne({ email: withdraw.email });
     // if (!user) {
     //   return res.send({ message: "User not found" });

@@ -167,6 +167,29 @@ Withdraw.post("/add-withdraw-request", async (req, res) => {
   }
 });
 
+Withdraw.put("/admin/approve/:id", async (req, res) => {
+  try {
+    const requestID = req.params.id;
+    const withdraw = await WithdrawModel.findById(requestID);
+    if (!withdraw) {
+      return res.send({ message: "Withdraw data not found" });
+    }
+    const user = await UserModel.findOne({ email: withdraw.email });
+    if (!user) {
+      return res.send({ message: "User not found" });
+    }
+    if (withdraw?.amount > user?.currentBalance) {
+      return res.send({ message: "Insufficient balance for withdrawal" });
+    }
+    const currentAmount = withdraw.amount;
+    user.currentBalance -= currentAmount;
+    user.withdrawalBalance += currentAmount;
+  } catch (err) {
+    console.log(err);
+    res.send({ message: "Server side error" });
+  }
+});
+
 Withdraw.delete("/delete-withdraw-approved-request/:id", async (req, res) => {
   try {
     const requestID = req.params.id;

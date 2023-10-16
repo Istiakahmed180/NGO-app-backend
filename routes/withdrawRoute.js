@@ -178,9 +178,9 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
     if (!user) {
       return res.send({ message: "User not found" });
     }
-    // if (withdraw?.amount > user?.currentBalance) {
-    //   return res.send({ message: "Insufficient balance for withdrawal" });
-    // }
+    if (withdraw?.amount > user?.currentBalance) {
+      return res.send({ message: "Insufficient balance for withdrawal" });
+    }
     // const currentAmount = withdraw.amount;
     // user.currentBalance -= currentAmount;
     // user.withdrawalBalance += currentAmount;

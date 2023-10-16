@@ -174,17 +174,17 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
     const withdraw = await WithdrawModel.findById(requestID);
 
     if (!withdraw) {
-      return res.send({ message: "Withdraw data not found" });
+      return res.json({ message: "Withdraw Data Not Found" });
     }
 
     const user = await UserModel.findOne({ email: withdraw.email });
 
     if (!user) {
-      return res.send({ message: "User not found" });
+      return res.json({ message: "User Not Found" });
     }
 
-    if (withdraw.amount > user.currentBalance) {
-      return res.send({ message: "Insufficient balance for withdrawal" });
+    if (withdraw?.amount > user?.currentBalance) {
+      return res.json({ message: "Insufficient Balance for Withdrawal" });
     }
 
     const currentAmount = withdraw.amount;
@@ -199,22 +199,22 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
 
     withdraw.approvalStatus = "approved";
     withdraw.isAdminApproved = true;
-    withdraw.deductionPercentAmount = deductionAmount;
+    withdraw.deductionPercentAmount = deductionAmount.toFixed(2);
     withdraw.withdrawAmount = currentAmount;
-    withdraw.amount = deductionAmount;
+    withdraw.amount -= deductionAmount.toFixed(2);
     withdraw.withdrawDate = withdrawDate;
 
     await user.save();
     await withdraw.save();
 
-    return res.send({
-      message: "Withdraw request approved success",
+    return res.json({
+      message: "Withdraw Request Approved Success",
       user,
       withdraw,
     });
   } catch (error) {
     console.log(error);
-    res.send({ message: "Server Side Error" });
+    res.json({ message: "Server Side Error" });
   }
 });
 

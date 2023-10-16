@@ -167,56 +167,56 @@ Withdraw.post("/add-withdraw-request", async (req, res) => {
   }
 });
 
-Withdraw.put("/admin/approve/:id", async (req, res) => {
-  try {
-    const requestID = req.params.id;
+// Withdraw.put("/admin/approve/:id", async (req, res) => {
+//   try {
+//     const requestID = req.params.id;
 
-    const withdraw = await WithdrawModel.findById(requestID);
+//     const withdraw = await WithdrawModel.findById(requestID);
 
-    if (!withdraw) {
-      return res.json({ message: "Withdraw Data Not Found" });
-    }
+//     if (!withdraw) {
+//       return res.json({ message: "Withdraw Data Not Found" });
+//     }
 
-    const user = await UserModel.findOne({ email: withdraw.email });
+//     const user = await UserModel.findOne({ email: withdraw.email });
 
-    if (!user) {
-      return res.json({ message: "User Not Found" });
-    }
+//     if (!user) {
+//       return res.json({ message: "User Not Found" });
+//     }
 
-    if (withdraw?.amount > user?.currentBalance) {
-      return res.json({ message: "Insufficient Balance for Withdrawal" });
-    }
+//     if (withdraw?.amount > user?.currentBalance) {
+//       return res.json({ message: "Insufficient Balance for Withdrawal" });
+//     }
 
-    const currentAmount = withdraw.amount;
+//     const currentAmount = withdraw.amount;
 
-    user.currentBalance -= currentAmount;
-    user.withdrawalBalance += currentAmount;
+//     user.currentBalance -= currentAmount;
+//     user.withdrawalBalance += currentAmount;
 
-    const deductionAmount = withdraw.amount * 0.07;
+//     const deductionAmount = withdraw.amount * 0.07;
 
-    const currentDate = moment();
-    const withdrawDate = moment(currentDate).add(1, "month");
+//     const currentDate = moment();
+//     const withdrawDate = moment(currentDate).add(1, "month");
 
-    withdraw.approvalStatus = "approved";
-    withdraw.isAdminApproved = true;
-    withdraw.deductionPercentAmount = deductionAmount.toFixed(2);
-    withdraw.withdrawAmount = currentAmount;
-    withdraw.amount -= deductionAmount.toFixed(2);
-    withdraw.withdrawDate = withdrawDate;
+//     withdraw.approvalStatus = "approved";
+//     withdraw.isAdminApproved = true;
+//     withdraw.deductionPercentAmount = deductionAmount.toFixed(2);
+//     withdraw.withdrawAmount = currentAmount;
+//     withdraw.amount -= deductionAmount.toFixed(2);
+//     withdraw.withdrawDate = withdrawDate;
 
-    await user.save();
-    await withdraw.save();
+//     await user.save();
+//     await withdraw.save();
 
-    return res.json({
-      message: "Withdraw Request Approved Success",
-      user,
-      withdraw,
-    });
-  } catch (error) {
-    console.log(error);
-    res.json({ message: "Server Side Error" });
-  }
-});
+//     return res.json({
+//       message: "Withdraw Request Approved Success",
+//       user,
+//       withdraw,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.json({ message: "Server Side Error" });
+//   }
+// });
 
 Withdraw.delete("/delete-withdraw-approved-request/:id", async (req, res) => {
   try {

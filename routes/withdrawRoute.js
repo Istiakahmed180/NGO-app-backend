@@ -167,20 +167,20 @@ Withdraw.post("/add-withdraw-request", async (req, res) => {
   }
 });
 
-Withdraw.put("/admin/approve/:id", async (res, req) => {
+Withdraw.put("/admin/approve/:id", async (req, res) => {
   try {
     const requestID = req.params.id;
 
     const withdraw = await WithdrawModel.findById(requestID);
 
     if (!withdraw) {
-      return res.json({ message: "Withdraw Data Not Found" });
+      return res.status(404).json({ message: "Withdraw Data Not Found" });
     }
 
     const user = await UserModel.findOne({ email: withdraw.email });
 
     if (!user) {
-      return res.json({ message: "User Not Found" });
+      return res.status(404).json({ message: "User Not Found" });
     }
 
     if (withdraw?.amount > user?.currentBalance) {
@@ -192,7 +192,7 @@ Withdraw.put("/admin/approve/:id", async (res, req) => {
     user.currentBalance -= currentAmount;
     user.withdrawalBalance += currentAmount;
 
-    const deductionAmount = withdraw.amount * 0.07;
+    // const deductionAmount = withdraw.amount * 0.07;
 
     const currentDate = moment();
     const withdrawDate = moment(currentDate).add(1, "month");
@@ -207,14 +207,12 @@ Withdraw.put("/admin/approve/:id", async (res, req) => {
     await user.save();
     await withdraw.save();
 
-    return res.json({
-      message: "Withdraw Request Approved Success",
-      user,
-      withdraw,
-    });
+    return res
+      .status(200)
+      .json({ message: "Withdraw Request Approved Success", user, withdraw });
   } catch (error) {
     console.log(error);
-    res.json({ message: "Server Side Error" });
+    res.status(500).json({ message: "Server Side Error" });
   }
 });
 

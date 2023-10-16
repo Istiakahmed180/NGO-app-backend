@@ -199,9 +199,9 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
 
     withdraw.approvalStatus = "approved";
     withdraw.isAdminApproved = true;
-    withdraw.deductionPercentAmount = deductionAmount;
+    withdraw.deductionPercentAmount = deductionAmount.toFixed(2);
     withdraw.withdrawAmount = currentAmount;
-    withdraw.amount -= deductionAmount;
+    withdraw.amount -= deductionAmount.toFixed(2);
     withdraw.withdrawDate = withdrawDate;
 
     await user.save();

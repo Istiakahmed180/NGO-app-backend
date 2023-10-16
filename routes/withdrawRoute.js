@@ -170,7 +170,7 @@ Withdraw.post("/add-withdraw-request", async (req, res) => {
 Withdraw.put("/admin/approve/:id", async (req, res) => {
   try {
     const requestID = req.params.id;
-    // const withdraw = await WithdrawModel.findById(requestID);
+    const withdraw = await WithdrawModel.findById(requestID);
     // if (!withdraw) {
     //   return res.send({ message: "Withdraw data not found" });
     // }

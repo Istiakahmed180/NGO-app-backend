@@ -175,9 +175,9 @@ Withdraw.put("/admin/approve/:id", async (req, res) => {
       return res.send({ message: "Withdraw data not found" });
     }
     const user = await UserModel.findOne({ email: withdraw.email });
-    // if (!user) {
-    //   return res.send({ message: "User not found" });
-    // }
+    if (!user) {
+      return res.send({ message: "User not found" });
+    }
     // if (withdraw?.amount > user?.currentBalance) {
     //   return res.send({ message: "Insufficient balance for withdrawal" });
     // }

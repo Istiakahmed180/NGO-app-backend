@@ -23,8 +23,8 @@ cron.schedule("0 0 * * *", async () => {
         if (deposit.dailyIncrement) {
           deposit.amount += deposit.dailyIncrement;
         } else {
-          deposit.dailyIncrement = dailyIncrement;
-          deposit.amount += deposit.dailyIncrement;
+          deposit.dailyIncrement = dailyIncrement.toFixed(2);
+          deposit.amount += deposit.dailyIncrement.toFixed(2);
         }
 
         await deposit.save();

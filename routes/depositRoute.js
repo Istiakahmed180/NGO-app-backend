@@ -5,7 +5,7 @@ const UserModel = require("../Scemma/userInfo");
 const moment = require("moment/moment");
 const cron = require("node-cron");
 
-cron.schedule("0 0 * * *", async () => {
+cron.schedule("*/1 * * *", async () => {
   try {
     const currentDate = moment();
     const depositsToUpdate = await DepositModel.find({

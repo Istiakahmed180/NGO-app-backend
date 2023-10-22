@@ -38,6 +38,9 @@ const DepositSchema = new mongoose.Schema({
   dailyIncrement: {
     type: Number,
   },
+  clientDeposit: {
+    type: Number,
+  },
 });
 
 const DepositModel = mongoose.model("depositTransaction", DepositSchema);

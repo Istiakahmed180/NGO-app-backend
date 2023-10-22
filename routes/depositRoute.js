@@ -99,6 +99,7 @@ Deposit.post("/add-deposit-transaction", async (req, res) => {
       amount,
       bio,
       withdrawDate: withdrawDate,
+      clientDeposit: amount,
     });
 
     const depositData = await userData.save();

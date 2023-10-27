@@ -5,36 +5,36 @@ const UserModel = require("../Scemma/userInfo");
 const moment = require("moment/moment");
 const cron = require("node-cron");
 
-// cron.schedule("*/1 * * * *", async () => {
-//   try {
-//     const currentDate = moment();
-//     const depositsToUpdate = await DepositModel.find({
-//       withdrawDate: { $gt: currentDate },
-//       amount: { $gt: 0 },
-//     });
+cron.schedule("0 0 * * * *", async () => {
+  try {
+    const currentDate = moment();
+    const depositsToUpdate = await DepositModel.find({
+      withdrawDate: { $gt: currentDate },
+      amount: { $gt: 0 },
+    });
 
-//     await Promise.all(
-//       depositsToUpdate.map(async (deposit) => {
-//         const daysDifference =
-//           moment(deposit.withdrawDate).diff(currentDate, "days") + 1;
-//         console.log(daysDifference);
-//         const dailyIncrement = deposit.amount / daysDifference;
-//         console.log(dailyIncrement);
-//         // if (deposit.dailyIncrement) {
-//         //   deposit.amount += deposit.dailyIncrement;
-//         // } else {
-//         //   deposit.dailyIncrement = dailyIncrement;
-//         //   deposit.amount += deposit.dailyIncrement;
-//         // }
-//         // await deposit.save();
-//       })
-//     );
+    await Promise.all(
+      depositsToUpdate.map(async (deposit) => {
+        const daysDifference =
+          moment(deposit.withdrawDate).diff(currentDate, "days") + 1;
 
-//     console.log("Deposits updated successfully.");
-//   } catch (error) {
-//     console.error("Error updating deposits:", error);
-//   }
-// });
+        const dailyIncrement = deposit.clientDeposit / daysDifference;
+
+        if (deposit.dailyIncrement) {
+          deposit.amount = deposit.amount + deposit.dailyIncrement;
+        } else {
+          deposit.dailyIncrement = dailyIncrement;
+          deposit.amount = deposit.amount + deposit.dailyIncrement;
+        }
+        await deposit.save();
+      })
+    );
+
+    console.log("Deposits updated successfully.");
+  } catch (error) {
+    console.error("Error updating deposits:", error);
+  }
+});
 
 Deposit.get("/root", (req, res) => {
   res.send({ message: "Deposit Route Is Running" });

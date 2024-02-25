@@ -47,7 +47,7 @@ app.use("/api/profit", Profit);
 
 // Testing
 app.get("/api/root", (req, res) => {
-  res.send({ message: "NGO Server Is Running" });
+  res.send({ message: "HSD AI Server Is Running" });
 });
 
 app.listen(port, () => {

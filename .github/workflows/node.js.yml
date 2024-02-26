@@ -26,6 +26,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: |
+          git pull
+          npm install
           touch .env
           echo "${{ secrets.PROD }}" > .env
     - run: pm2 restart Backend

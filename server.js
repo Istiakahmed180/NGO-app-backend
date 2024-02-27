@@ -47,7 +47,7 @@ app.use("/api/profit", Profit);
 
 // Testing
 app.get("/api/root", (req, res) => {
-  res.send({ message: "HSD AI Server Is Running On Aws" });
+  res.send({ message: "App Developer Istiak Ahmed" });
 });
 
 app.listen(port, () => {

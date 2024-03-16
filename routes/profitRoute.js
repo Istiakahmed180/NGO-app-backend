@@ -2,6 +2,7 @@ const express = require("express");
 const Profit = express.Router();
 const ProfitModel = require("../Scemma/profitSchema");
 const WithdrawModel = require("../Scemma/withdrawShhema");
+const UserProfitModel = require("../Scemma/userProfitSchema");
 const moment = require("moment/moment");
 
 Profit.get("/root", (req, res) => {
@@ -28,9 +29,8 @@ Profit.get("/get-admin-profit", async (req, res) => {
 
 Profit.post("/add-admin-profit", async (req, res) => {
   try {
-    const { name, email, image, phone, address, gender, bio, vat } = req.body;
-
-    const withdrawProfit = await WithdrawModel.findOne({ email });
+    const { name, email, vat } = req.body;
+    const withdrawProfit = await UserProfitModel.findOne({ email });
 
     if (!withdrawProfit) {
       return res.status(404).json({ message: "Client Information Not Found" });
@@ -50,11 +50,6 @@ Profit.post("/add-admin-profit", async (req, res) => {
       const adminProfit = new ProfitModel({
         name,
         email,
-        image,
-        phone,
-        address,
-        gender,
-        bio,
         vat: currentVat,
       });
 
@@ -79,19 +74,37 @@ Profit.get("/daily-admin-profit", async (req, res) => {
         $gte: today,
         $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
       },
-      approvalStatus: "approved",
-      isAdminApproved: true,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "Daily withdraw data get complete",
-        data: currentWithdrawRequest,
-      });
+    res.status(200).json({
+      message: "Daily withdraw data get complete",
+      data: currentWithdrawRequest,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: `Server side error ${error}` });
+  }
+});
+
+Profit.get("/get-user-profit", async (req, res) => {
+  try {
+    const userProfitEmail = req.query.email;
+
+    const userProfitData = await UserProfitModel.find({
+      email: userProfitEmail,
+    }).sort({ _id: -1 });
+
+    if (!userProfitData) {
+      return res.json({ message: "User Profit Not Found", type: false });
+    }
+    res.json({
+      message: "User Profit Data Get Complete",
+      profit: userProfitData,
+      type: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: "Server Side Error" });
   }
 });
 

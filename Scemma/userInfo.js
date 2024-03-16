@@ -17,6 +17,7 @@ const UserSchema = new mongoose.Schema({
   bio: String,
   sendAmount: Number,
   receiveAmount: Number,
+  adminProfit: Number,
   date: {
     type: Date,
     default: Date.now,

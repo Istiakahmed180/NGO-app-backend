@@ -27,7 +27,7 @@ Invest.get("/get-user-investment-data", async (req, res) => {
 
     const getInvestmentData = await InvestModel.find({
       email: userEmail,
-      approvalStatus: "approved",
+      // approvalStatus: "approved",
     }).sort({ _id: -1 });
 
     if (!getInvestmentData) {

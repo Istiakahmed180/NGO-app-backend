@@ -7,21 +7,6 @@ const ProfitSchema = new mongoose.Schema({
   email: {
     type: String,
   },
-  image: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  },
-  address: {
-    type: String,
-  },
-  gender: {
-    type: String,
-  },
-  bio: {
-    type: String,
-  },
   vat: {
     type: Number,
   },

@@ -1,6 +1,7 @@
 const express = require("express");
 const Deposit = express.Router();
 const DepositModel = require("../Scemma/depositSchema");
+const UserProfitModel = require("../Scemma/userProfitSchema");
 const UserModel = require("../Scemma/userInfo");
 const moment = require("moment/moment");
 const cron = require("node-cron");
@@ -13,22 +14,22 @@ cron.schedule("0 0 * * *", async () => {
       amount: { $gt: 0 },
     });
 
-    await Promise.all(
-      depositsToUpdate.map(async (deposit) => {
-        const daysDifference =
-          moment(deposit.withdrawDate).diff(currentDate, "days") + 1;
+    for (const deposit of depositsToUpdate) {
+      const daysDifference =
+        moment(deposit.withdrawDate).diff(currentDate, "days") + 1;
+      const dailyIncrement = deposit.clientDeposit / daysDifference;
 
-        const dailyIncrement = deposit.clientDeposit / daysDifference;
+      if (deposit.dailyIncrement) {
+        deposit.amount += deposit.dailyIncrement;
+        deposit.profit += deposit.dailyIncrement;
+      } else {
+        deposit.dailyIncrement = dailyIncrement;
+        deposit.amount += deposit.dailyIncrement;
+        deposit.profit += deposit.dailyIncrement;
+      }
 
-        if (deposit.dailyIncrement) {
-          deposit.amount = deposit.amount + deposit.dailyIncrement;
-        } else {
-          deposit.dailyIncrement = dailyIncrement;
-          deposit.amount = deposit.amount + deposit.dailyIncrement;
-        }
-        await deposit.save();
-      })
-    );
+      await deposit.save();
+    }
 
     console.log("Deposits updated successfully.");
   } catch (error) {
@@ -48,7 +49,7 @@ Deposit.get("/get-deposit-transaction", async (req, res) => {
       _id: -1,
     });
     if (!userData) {
-      return res.status(404).json({ message: "User Not Found", type: false });
+      return res.json({ message: "User Not Found", type: false });
     }
     res
       .status(200)
@@ -61,7 +62,7 @@ Deposit.get("/get-deposit-transaction", async (req, res) => {
 
 Deposit.post("/add-deposit-transaction", async (req, res) => {
   try {
-    const { name, email, image, phone, address, gender, amount, bio } =
+    const { name, email, image, phone, address, gender, amount, bio, profit } =
       req.body;
 
     const existingUser = await UserModel.findOne({ email });
@@ -84,7 +85,8 @@ Deposit.post("/add-deposit-transaction", async (req, res) => {
       });
     }
     const currentDate = moment();
-    const withdrawDate = moment(currentDate).add(15, "months");
+    const withdrawDate = moment(currentDate).add(450, "days");
+    const profitWithdrawDate = moment(currentDate).add(30, "days");
 
     existingUser.currentBalance -= amount;
 
@@ -97,8 +99,10 @@ Deposit.post("/add-deposit-transaction", async (req, res) => {
       gender,
       amount,
       bio,
+      profit,
       withdrawDate: withdrawDate,
       clientDeposit: amount,
+      profitWithdrawDate: profitWithdrawDate,
     });
 
     const depositData = await userData.save();
@@ -133,7 +137,9 @@ Deposit.put("/withdraw-deposit-money", async (req, res) => {
     }
 
     deposit.depositAmount = deposit.amount;
-
+    deposit.profitPercentAmount = deposit.depositAmount * 0.03;
+    deposit.depositAmount =
+      deposit.depositAmount - deposit.depositAmount * 0.03;
     deposit.amount = 0;
 
     const updatedDeposit = await deposit.save();
@@ -145,6 +151,67 @@ Deposit.put("/withdraw-deposit-money", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Server Side Error" });
+  }
+});
+
+Deposit.put("/withdraw-profit-money", async (req, res) => {
+  try {
+    const profitID = req.query.id;
+    const profitAmount = parseFloat(req.body.amount);
+
+    const profit = await DepositModel.findById(profitID);
+
+    if (!profit) {
+      return res
+        .status(404)
+        .json({ message: "Profit Data Not Found", type: false });
+    }
+
+    if (profit.amount === 0) {
+      return res.json({
+        message: "Your deposit service has been terminated",
+        type: false,
+      });
+    }
+
+    if (profit.profit === 0) {
+      return res.json({ message: "Your profit balance is zero", type: false });
+    }
+
+    if (profitAmount > profit.amount) {
+      return res.status(400).json({
+        message: "Withdrawal amount exceeds available profit",
+        type: false,
+      });
+    }
+
+    profit.profit -= profitAmount;
+    profit.amount -= profitAmount;
+    profit.profitWithdrawDate = moment().add(30, "days");
+
+    await profit.save();
+
+    const userProfitData = new UserProfitModel({
+      name: profit?.name,
+      email: profit?.email,
+      withdrawDate: profit.profitWithdrawDate,
+      clientDeposit: profit?.clientDeposit,
+      totalProfitBalance: profit?.profit,
+      deductionProfitAmount: profitAmount - profitAmount * 0.03,
+      withdrawProfitAmount: profitAmount,
+      profitPercentAmount: profitAmount * 0.03,
+    });
+
+    const profitData = await userProfitData.save();
+
+    res.status(200).json({
+      message: "Profit Withdraw successful",
+      type: true,
+      profit: profitData,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Side Error" });
   }
 });

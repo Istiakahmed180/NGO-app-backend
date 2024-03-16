@@ -41,6 +41,15 @@ const DepositSchema = new mongoose.Schema({
   clientDeposit: {
     type: Number,
   },
+  profit: {
+    type: Number,
+  },
+  profitWithdrawDate: {
+    type: Date,
+  },
+  profitPercentAmount: {
+    type: Number,
+  },
 });
 
 const DepositModel = mongoose.model("depositTransaction", DepositSchema);
